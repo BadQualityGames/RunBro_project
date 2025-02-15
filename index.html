@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каталог товаров</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <h1>Демо-магазин</h1>
+            <input type="text" id="search" placeholder="Я ищу...">
+        </header>
+        <nav>
+            <button class="category" data-category="all">Все товары</button>
+            <button class="category" data-category="men">Мужское</button>
+            <button class="category" data-category="shoes">Обувь</button>
+            <button class="category" data-category="sneakers">Кроссовки</button>
+            <button class="category" data-category="boots">Ботинки</button>
+        </nav>
+        <div id="products">
+            <!-- Товары будут загружены здесь -->
+        </div>
+        <footer>
+            <p>Создано при помощи tgshop.io</p>
+            <button id="view">Посмотреть</button>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
