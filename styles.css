@@ -35,8 +35,10 @@ header {
 }
 
 .product-card img {
-    max-width: 100%;
-    height: auto;
+    width: 200px; /* Фиксированная ширина */
+    height: 200px; /* Фиксированная высота */
+    object-fit: cover; /* Обрезает изображение, чтобы оно заполнило контейнер */
+    border-radius: 8px; /* Опционально: скругление углов */
 }
 
 .modal {
@@ -51,13 +53,26 @@ header {
     background-color: rgba(0,0,0,0.9);
 }
 
+.modal-content img {
+    max-width: 100%; /* Максимальная ширина изображения */
+    max-height: 400px; /* Максимальная высота изображения */
+    object-fit: contain; /* Сохраняет пропорции, не обрезая изображение */
+    border-radius: 8px; /* Скругление углов */
+    display: block; /* Убирает лишние отступы */
+    margin: 0 auto; /* Центрирование изображения */
+}
+
 .modal-content {
     background-color: #fff;
-    margin: 15% auto;
+    margin: 5% auto; /* Отступ сверху */
     padding: 20px;
     border: 1px solid #888;
-    width: 80%;
-    max-width: 600px;
+    width: 90%; /* Ширина модального окна */
+    max-width: 600px; /* Максимальная ширина */
+    max-height: 90vh; /* Максимальная высота окна */
+    overflow-y: auto; /* Прокрутка, если контент не помещается */
+    border-radius: 8px; /* Скругление углов */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Тень для красоты */
 }
 
 .close {
