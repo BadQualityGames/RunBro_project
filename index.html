@@ -4,29 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Каталог товаров</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="app">
-        <header>
-            <h1>Демо-магазин</h1>
-            <input type="text" id="search" placeholder="Я ищу...">
-        </header>
-        <nav>
-            <button class="category" data-category="all">Все товары</button>
-            <button class="category" data-category="men">Мужское</button>
-            <button class="category" data-category="shoes">Обувь</button>
-            <button class="category" data-category="sneakers">Кроссовки</button>
-            <button class="category" data-category="boots">Ботинки</button>
-        </nav>
-        <div id="products">
-            <!-- Товары будут загружены здесь -->
+    <header>
+        <h1>Каталог товаров</h1>
+        <div class="filters">
+            <input type="text" id="search" placeholder="Поиск...">
+            <select id="category">
+                <option value="">Все категории</option>
+                <!-- Опции будут добавлены через JS -->
+            </select>
+            <select id="brand">
+                <option value="">Все бренды</option>
+                <!-- Опции будут добавлены через JS -->
+            </select>
+            <select id="color">
+                <option value="">Все цвета</option>
+                <!-- Опции будут добавлены через JS -->
+            </select>
+            <select id="gender">
+                <option value="">Все</option>
+                <option value="male">Мужской</option>
+                <option value="female">Женский</option>
+                <option value="unisex">Унисекс</option>
+            </select>
         </div>
-        <footer>
-            <p>Создано при помощи tgshop.io</p>
-            <button id="view">Посмотреть</button>
-        </footer>
+    </header>
+
+    <main>
+        <div id="products" class="products-grid"></div>
+    </main>
+
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modalContent"></div>
+        </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>

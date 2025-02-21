@@ -1,67 +1,132 @@
-const tg = window.Telegram.WebApp;
+document.addEventListener('DOMContentLoaded', function() {
+    const productsGrid = document.getElementById('products');
+    const searchInput = document.getElementById('search');
+    const categorySelect = document.getElementById('category');
+    const brandSelect = document.getElementById('brand');
+    const colorSelect = document.getElementById('color');
+    const genderSelect = document.getElementById('gender');
+    const modal = document.getElementById('productModal');
+    const modalContent = document.getElementById('modalContent');
+    const closeModal = document.querySelector('.close');
 
-// Получение текущей темы
-const isDarkTheme = tg.colorScheme === 'dark';
+    let products = [];
 
-// Настройка цветов
-document.body.style.backgroundColor = isDarkTheme ? '#1e1e1e' : '#ffffff';
-document.body.style.color = isDarkTheme ? '#ffffff' : '#000000';
+    // Загрузка товаров
+    fetch('http://localhost:8888/z/get_products.php') // Укажите правильный порт
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok: ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            products = data;
+            displayProducts(products);
+            populateFilters(products);
+        })
+        .catch(error => {
+            console.error('Error fetching products:', error);
+        });
 
-// Пример данных о товарах
-const products = [
-    {
-        id: 1,
-        name: 'Толстовка Arch Hooded Sweat',
-        category: 'men',
-        price: 999,
-        description: 'Мужская толстовка с свободным кроем и регулируемым капюшоном.',
-        image: 'https://example.com/hoodie.jpg'
-    },
-    {
-        id: 2,
-        name: 'Кроссовки POP TRADING COMPANY',
-        category: 'sneakers',
-        price: 989,
-        description: 'Стильные кроссовки для повседневной носки.',
-        image: 'https://example.com/sneakers.jpg'
+    // Отображение товаров
+    function displayProducts(products) {
+        productsGrid.innerHTML = '';
+        products.forEach(product => {
+            const productCard = document.createElement('div');
+            productCard.className = 'product-card';
+
+            // Используем image_url для загрузки изображения
+            const imageUrl = product.image_url || 'default-image.jpg'; // Если image_url отсутствует, используем изображение по умолчанию
+
+            productCard.innerHTML = `
+                <img src="${imageUrl}" alt="${product.name}">
+                <h3>${product.name}</h3>
+                <p>${product.price} руб.</p>
+            `;
+            productCard.addEventListener('click', () => openModal(product));
+            productsGrid.appendChild(productCard);
+        });
     }
-];
 
-// Отображение товаров
-function renderProducts(category = 'all') {
-    const productsContainer = document.getElementById('products');
-    productsContainer.innerHTML = '';
+    // Открытие модального окна с деталями товара
+    function openModal(product) {
+        const imageUrl = product.image_url || 'default-image.jpg'; // Если image_url отсутствует, используем изображение по умолчанию
 
-    const filteredProducts = category === 'all' 
-        ? products 
-        : products.filter(product => product.category === category);
-
-    filteredProducts.forEach(product => {
-        const productElement = document.createElement('div');
-        productElement.className = 'product';
-        productElement.innerHTML = `
-            <h3>${product.name}</h3>
-            <p>${product.price} ₽</p>
+        modalContent.innerHTML = `
+            <h2>${product.name}</h2>
+            <div class="images">
+                <img src="${imageUrl}" alt="${product.name}">
+            </div>
             <p>${product.description}</p>
-            <button onclick="addToCart(${product.id})">+ Добавить</button>
+            <p><strong>Цена:</strong> ${product.price} руб.</p>
+            <a href="${product.referral_link}" target="_blank">Купить</a>
         `;
-        productsContainer.appendChild(productElement);
+        modal.style.display = 'block';
+    }
+
+    // Закрытие модального окна
+    closeModal.addEventListener('click', () => {
+        modal.style.display = 'none';
     });
-}
 
-// Фильтрация по категориям
-document.querySelectorAll('.category').forEach(button => {
-    button.addEventListener('click', () => {
-        const category = button.getAttribute('data-category');
-        renderProducts(category);
+    window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
     });
-});
 
-// Кнопка "Посмотреть"
-document.getElementById('view').addEventListener('click', () => {
-    tg.sendData(JSON.stringify({ action: 'view_cart' }));
-});
+    // Заполнение фильтров
+    function populateFilters(products) {
+        const categories = [...new Set(products.map(product => product.category))];
+        const brands = [...new Set(products.map(product => product.brand))];
+        const colors = [...new Set(products.map(product => product.color))];
 
-// Инициализация
-tg.ready();
-renderProducts();
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category;
+            option.textContent = category;
+            categorySelect.appendChild(option);
+        });
+
+        brands.forEach(brand => {
+            const option = document.createElement('option');
+            option.value = brand;
+            option.textContent = brand;
+            brandSelect.appendChild(option);
+        });
+
+        colors.forEach(color => {
+            const option = document.createElement('option');
+            option.value = color;
+            option.textContent = color;
+            colorSelect.appendChild(option);
+        });
+    }
+
+    // Фильтрация товаров
+    function filterProducts() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const category = categorySelect.value;
+        const brand = brandSelect.value;
+        const color = colorSelect.value;
+        const gender = genderSelect.value;
+
+        const filteredProducts = products.filter(product => {
+            return (
+                product.name.toLowerCase().includes(searchTerm) &&
+                (category === '' || product.category === category) &&
+                (brand === '' || product.brand === brand) &&
+                (color === '' || product.color === color) &&
+                (gender === '' || product.gender === gender)
+            );
+        });
+
+        displayProducts(filteredProducts);
+    }
+
+    searchInput.addEventListener('input', filterProducts);
+    categorySelect.addEventListener('change', filterProducts);
+    brandSelect.addEventListener('change', filterProducts);
+    colorSelect.addEventListener('change', filterProducts);
+    genderSelect.addEventListener('change', filterProducts);
+});
